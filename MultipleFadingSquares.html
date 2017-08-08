@@ -8,8 +8,9 @@
 <!--
 <h1>Object Practice</h1>
 <p>Stuff happening in console</p>
+border = "0px"
 -->
-<canvas id = "myCanvas"  style = "background-color: #FFFFFF; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; border:0px solid #000000;" border = "0px"></canvas>
+<canvas id = "myCanvas"  style = "background-color: #FFFFFF; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; border:0px solid #000000;" ></canvas>
 
 <script type="text/javascript">
 	var canvas = document.getElementById("myCanvas");
@@ -39,7 +40,7 @@
 	var t0 = new Date().getTime();
 	var ts = t0;
 
-	maxAlpha = .1;
+	maxAlpha = .3;
 	delta = maxAlpha/20;
 
 	var coloredSquare = randomAlphas(createObjArray(gridHeight,gridWidth));
