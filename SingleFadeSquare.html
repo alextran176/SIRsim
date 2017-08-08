@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Single Fade square practice</title>
+</head>
+<body style="margin:0; background-color: #FFFFFF;">
+
+<!--
+<h1>Object Practice</h1>
+<p>Stuff happening in console</p>
+<canvas id = "myCanvas"  height = "1000" width = "1000"></canvas>
+-->
+<canvas id = "myCanvas"  style = "background-color: #FFFFFF; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></canvas>
+
+
+
+
+<script type="text/javascript">
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	
+	
+	
+	var	alpha = 0;
+	var	delta = .1;
+	var	color = "rgba(0,0,0," + alpha + ")"; //initialize starting color
+
+	var state = {
+		alpha : alpha,
+		delta : delta,
+		color : "rgba(0,0,0," + alpha + ")", //initialize starting color
+		complete : false
+	}
+	
+	//drawSquare(color);
+	//console.log(color);s
+	//updateState();
+	//console.log(color);
+	//tick();
+	//drawSquare(color);
+	var fps = 50;
+	var period = (1/fps);
+	//console.log(period);
+	var t0 = new Date().getTime();
+	var ts = t0;
+	main();
+
+	function main(){
+
+		if(state.complete == false){
+			requestAnimationFrame(main);
+		}
+		else{
+			return;
+		}
+		var tf = new Date().getTime();
+		var tpassed = (tf-ts)/1000;
+		//console.log(tpassed);
+
+		if(tpassed >= period) {
+			ts = new Date().getTime();
+			drawSquare(state.color);
+			newState = updateState(state.color, state.alpha, state.delta, state.complete);
+			state = newState;
+			//console.log(color);
+		}
+	}
+
+	function drawSquare(squareColor){ //fills a 10x10px rectangle in the center of the canvas with current color
+		ctx.clearRect(canvas.width/2,canvas.height/2, 100, 100);
+		ctx.fillStyle = squareColor;
+		ctx.fillRect(canvas.width/2,canvas.height/2, 100, 100);
+	}
+
+	function updateState(color_, alpha_, delta_, complete_){
+		if(alpha_ >= 1 && complete_ == false){
+			delta_ = -delta_;
+		}
+		if(alpha_ < 0){
+		//else
+			complete_ = true;
+			
+		}
+			alpha_ += delta_;
+			//console.log(alpha_);
+			//color_ = "rgba(0,0,0," + alpha_ + ")";
+			color_ = "rgba(0,0,0," + alpha_ + ")";
+
+		
+		console.log(color_);
+		console.log(complete_);
+		var localState = {
+			alpha : alpha_,
+			delta : delta_,
+			color : color_,
+			complete : complete_
+		}
+		return localState;
+	}
+
+</script>
+</body>
+</html>

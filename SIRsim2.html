@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SIRsim1</title>
+</head>
+<body style="margin:0; background-color: #FFFFFF;">
+
+<!--
+<h1>Object Practice</h1>
+<p>Stuff happening in console</p>
+-->
+<canvas id = "myCanvas"  style = "background-color: #FFFFFF; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; border:0px solid #000000;" border = "1px"></canvas>
+
+<script type="text/javascript">
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	ctx.canvas.width = Math.round(window.innerHeight/1.15);
+	ctx.canvas.height = Math.round(window.innerHeight/1.15);
+
+	//pxSize = canvas.width/20;
+	//scale = Math.round(pxSize);
+	pxSize = 100;
+	scale = 100;
+
+	gridHeight = Math.floor(canvas.height/pxSize);
+	gridWidth = Math.floor(canvas.width/pxSize);
+	//gridHeight = 10;
+	//gridWidth = 20;
+	console.log(canvas.height, canvas.width);
+	console.log(gridHeight, gridWidth);
+	ctx.canvas.height = gridHeight*pxSize;
+	ctx.canvas.width = gridWidth*pxSize;
+	
+	//pxSize = Math.round(canvas.height/10);
+	//scale = Math.round(canvas.height/10);
+	
+	var fps = 50; //need to come up with a way to normalize fps and delta value.  "simSpeed" variable to set the pace of the whole sim
+	var period = (1/fps);
+	var t0 = new Date().getTime();
+	var ts = t0;
+
+	maxAlpha = .1;
+	delta = maxAlpha/20;
+
+	//var coloredSquare = randomAlphas(createObjArray(gridHeight,gridWidth));
+	var SIRgrid = createObjArray(gridHeight,gridWidth);
+	var SIRgridInfected = randomInfect(SIRgrid);
+
+	var SIRgrid[0][gridHeight-1].state = "I";
+	//drawGrid(coloredSquare, pxSize, scale);
+	main();
+
+	function main(){
+		requestAnimationFrame(main);
+		var tf = new Date().getTime();
+		var tpassed = (tf-ts)/1000;
+		//console.log(tpassed);
+
+		if(tpassed >= period) {
+			ts = new Date().getTime();
+			drawGrid(SIRgrid, pxSize, scale);
+			SIRgrid = updateGrid(SIRgrid);
+			//drawGrid(SIRgridInfected, pxSize, scale);
+			//SIRgridInfected = updateGrid(SIRgrid);
+		}
+	}
+
+	function createObjArray(height, width) {  //creates an array of coloredSquare objects
+		//console.log(2);
+		var objArray = [];
+		for(var i = 0; i < height; i++) {
+			objArray[i] = [];
+			//console.log(2);
+			for(var j = 0; j < width; j++){
+				objArray[i][j] = {} //initialize empty object
+
+				objArray[i][j].state = "S"; //starting state is S.
+
+				//objArray[i][j].stateTime = 0;
+
+				objArray[i][j].alpha = maxAlpha; //set initial S alpha level
+
+				if(Math.round(Math.random())){ //randomly -delta or +delta
+					objArray[i][j].delta = -delta;
+				}
+				else{
+					objArray[i][j].delta = delta;
+				}
+
+				objArray[i][j].color = "rgba(0,0,0," + objArray[i][j].alpha + ")";
+			}
+		}
+		return objArray;
+	}
+
+	function randomInfect(objArray, density){ //randomly places infected individuals throughout the board
+		var height = objArray.length;
+		var width = objArray[0].length;
+		//console.log(height, width);
+		for(var i = 0; i < height; i++) {
+			for(var j = 0; j < width; j++){
+				var val = Math.random();
+	    		if(val <= density) { //sets a certain probability (e.g. 70% or 10%)
+	    			objArray[i][j].state = "I";
+	    		}
+			}
+		}
+		return objArray;
+	}
+
+	function drawGrid(objArray, pxSize_, scale_){ //parses through objArray, draws a rectangle according to current state
+		var height = objArray.length;
+		var width = objArray[0].length;
+		for(var i = 0; i < height; i++){ //parse through rows
+			for(var j = 0; j < width; j++){ //parse through columns
+				//console.log(i,j);
+				ctx.clearRect(j*scale_,i*scale_, pxSize_, pxSize_); //remember that canvas coordinates are (col,row)
+				ctx.fillStyle = objArray[i][j].color;
+				ctx.fillRect(j*scale_,i*scale_, pxSize_, pxSize_); //multiply coordinate by scale factor
+			}
+		}				
+	}
+
+	function updateGrid(objArray){
+		var height = objArray.length;
+		var width = objArray[0].length;
+		for(var i = 1; i < height-1; i++){ //parse through rows (excluding outer ring of pixels)
+			for(var j = 1; j < width-1; j++){ //parse through columns (excluding outer ring of pixels)
+		//for(var i = 0; i < height; i++){ //parse through rows
+			//for(var j = 0; j < width; j++){ //parse through columns
+				//only check around the infected individuals
+				//check cell state
+				//if S, infect
+				//call infection animation function(?)
+					//or just step the infection here.
+
+				if(objArray[i][j].alpha >= maxAlpha && objArray[i][j].complete == false){
+					objArray[i][j].delta = -1*objArray[i][j].delta;
+					objArray[i][j].alpha += objArray[i][j].delta;
+				objArray[i][j].color = "rgba(0,0,0," + objArray[i][j].alpha + ")";
+				}
+				if(objArray[i][j].alpha < 0){
+					objArray[i][j].complete == true;
+				}
+
+				objArray[i][j].alpha += objArray[i][j].delta;
+				objArray[i][j].color = "rgba(0,0,0," + objArray[i][j].alpha + ")";
+
+				/*
+				objArray[i - 1][j - 1].I; //top left
+				[i - 1][j]; //top
+				[i -1][j + 1]; //top right
+
+				[i][j - 1]; //left
+				[i][j + 1]; //right
+				[i + 1][j - 1]; //bot left
+				[i + 1][j]; //bot
+				[i + 1][j + 1]; //bot right
+				*/
+				if(objArray[i][j].alpha <=0 || objArray[i][j].alpha >= maxAlpha){
+					objArray[i][j].delta = -1*objArray[i][j].delta;
+				}
+				objArray[i][j].alpha += objArray[i][j].delta;
+				objArray[i][j].color = "rgba(0,0,0," + objArray[i][j].alpha + ")";
+			}
+		}
+		return objArray;
+	}
+
+
+
+/*
+Things to do:
+
+UPDATE updateGrid() function
+	- kernel parse through every pixel and check each cell around current index
+	- if infected, then you become infected
+
+*/
+</script>
+</body>
+</html>

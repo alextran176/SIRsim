@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RectDrawPractice</title>
+</head>
+<body style="margin:0; background-color: #FFFFFF;">
+
+<!--
+<h1>Object Practice</h1>
+<p>Stuff happening in console</p>
+style="border:1px solid #000000;"
+-->
+<canvas id = "myCanvas"  style = "background-color: #FFFFFF; padding: 0; margin: auto; display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; border:1px solid #000000;" border = "1px"></canvas>
+
+<canvas id = "myCanvas"  height = "1000" width = "1000"></canvas>
+
+
+<script type="text/javascript">
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	ctx.canvas.width = Math.round(window.innerWidth/1.15);
+	ctx.canvas.height = Math.round(window.innerHeight/1.15);
+	
+	
+	squareColor = "#000000";
+	ctx.fillStyle = squareColor;
+	ctx.fillRect(1,1, 10, 10);
+
+	function main(){
+
+		requestAnimationFrame(main);
+		var tf = new Date().getTime();
+		var tpassed = (tf-ts)/1000;
+		//console.log(tpassed);
+
+		if(tpassed >= period) {
+			ts = new Date().getTime();
+			drawSquare(state.color);
+			newState = updateState(state.color, state.alpha, state.delta);
+			state = newState;
+			//console.log(color);
+		}
+	}
+
+	function drawSquare(squareColor){ //fills a 10x10px rectangle in the center of the canvas with current color
+		ctx.clearRect(canvas.width/2,canvas.height/2, 10, 10);
+		ctx.fillStyle = squareColor;
+		ctx.fillRect(canvas.width/2,canvas.height/2, 10, 10);
+	}
+
+	function updateState(color_, alpha_, delta_){
+		if(alpha_ <=0 || alpha_ >= 255)
+			delta_ = -delta_;
+
+		alpha_ += delta_;
+		//console.log(alpha_);
+		//color_ = "rgba(0,0,0," + alpha_ + ")";
+		color_ = "rgba("+alpha_+",0,0,1)";
+		console.log(color_);
+		return {
+			alpha : alpha_,
+			delta : delta_,
+			color : color_,
+
+		}
+	}
+
+</script>
+</body>
+</html>
